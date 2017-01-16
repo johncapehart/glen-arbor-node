@@ -1,6 +1,0 @@
-{
-  "directory": "bower_components",
-  "scripts": {
-    "no_postinstall": "./node_modules/.bin/bower-requirejs -c client/app/require-config.js -e underscore"
-  }
-}

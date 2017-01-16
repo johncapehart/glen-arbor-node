@@ -1,13 +1,20 @@
 {
   "strict": "global",
+  "esversion": 6,
+  "single": true,
+  "es6": true,
+  "node": true,
+  "mocha": true,
   "globals": {
+    "require": false,
     // Angular
     "angular": false,
-
+    "define": false,
     // Angular mocks
     "module": false,
     "inject": false,
-
+    // mocha
+    "describe": false,
     // Jasmine
     "jasmine": false,
     "describe": false,
@@ -15,7 +22,6 @@
     "afterEach": false,
     "it": false,
     "expect": false,
-
     // Protractor
     "browser": false,
     "element": false,

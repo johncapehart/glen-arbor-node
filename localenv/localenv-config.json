@@ -1,0 +1,15 @@
+{
+	"deployMode" : "dev",
+	"server": {
+		"sitePrefix": "/api2/",
+		"asp": {
+			"sitePrefix": "asp2/",
+			"host": "localhost",
+			"protocol": "http"
+		},
+		"winrmhost": "localhost",
+		"webhookip": "0.0.0.0",
+		"webhookport": 8082,
+		"credential": "sample"
+	}
+}

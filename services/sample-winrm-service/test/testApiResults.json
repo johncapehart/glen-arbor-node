@@ -1,0 +1,61 @@
+{
+  "configure": {
+    "client": {
+      "ui": {
+        "menuItems": [
+          {
+            "Name": "Operation 1"
+          },
+          {
+            "Name": "Operation 2"
+          }
+        ]
+      }
+    }
+  },
+  "context":{
+
+  },
+  "discovery": {
+    "output": {
+      "data": [
+        {
+          "TargetName": "Target 1"
+        },
+        {
+          "TargetName": "Target 2"
+        }
+      ]
+    },
+    "verbose": [
+      {
+        "Message": "Retrieving Target 1"
+      },
+      {
+        "Message": "Retrieving Target 2"
+      }
+    ]
+  },
+  "action": {
+    "output": {
+      "data": [
+        {
+          "TargetName": "Target 1",
+          "Operation": "Operation 1"
+        },
+        {
+          "TargetName": "Target 2",
+          "Operation": "Operation 1"
+        }
+      ]
+    },
+    "verbose": [
+      {
+        "Message": "Performing Operation 1 on Target 1"
+      },
+      {
+        "Message": "Performing Operation 1 on Target 2"
+      }
+    ]
+  }
+}
