@@ -1,0 +1,30 @@
+---
+operations:
+  deploy:
+    CredSSP: "Enable-WSManCredSSP -Role Server -Force"
+    Functor4PS: "msiexec /i /q Functor4PS.msi"
+    ? "Git Credential Manager for Windows"
+    : GCMW-1.3.0.exe
+    Json4PS: "msiexec /i /q Json4PS.msi"
+    ? "Tortoise Git"
+    : TortoiseGit-2.3.0.0-64bit.msi
+    WMF5: "wusa /update Win8.1AndW2K12R2-KB3134758-x64.msu /quiet"
+    webserver:
+      CredSSP:
+        ? "Enable-WSManCredSSP -Role Client -DelegateComputer \"*.$env:USERDNSDOMAIN\"      \"nssm\""
+        : nssm-2.24-87-g203bfae.zip
+      IIS: "Install-WindowsFeature Web-Server, ..."
+      ? "Url Rewrite 2.0"
+      : |
+          # https://vlasenko.org/2015/11/24/install-iis-urlrewrite-and-arr-by-powershell/
+          Create-Item c:/msi -Type Directory
+          Invoke-WebRequest 'http://download.microsoft.com/download/C/F/F/CFF3A0B8-99D4-41A2-AE1A-496C08BEB904/WebPlatformInstaller_amd64_en-US.msi' -OutFile c:/msi/WebPlatformInstaller_amd64_en-US.msi
+          Start-Process 'c:/msi/WebPlatformInstaller_amd64_en-US.msi' '/qn' -PassThru | Wait-Process
+          cd 'C:/Program Files/Microsoft/Web Platform Installer'; WebpiCmd.exe /Install /Products:'UrlRewrite2,ARRv3_0' /AcceptEULA /Log:c:/msi/WebpiCmd.log
+      node.js: node-v4.4.7-x64.msi
+    worker:
+      ActiveDirectory: "dism /online /enable-feature /featurename:RemoteServerAdministrationTools"
+      CredentialManager: "Install-Module CredentialManager"
+      ExecutionPolicy: "Set-ExecutionPolicy 'RemoteSigned'"
+      dism: "windows feature installed via KB"
+...

@@ -1,0 +1,122 @@
+---
+activities:
+  -
+    start: {}
+  -
+    discover:
+      command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
+      vars:
+        filter: $context.filter
+  -
+    confirm: {}
+  -
+    request: {}
+  -
+    approve: {}
+  -
+    apply:
+      command: "$__l | % { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'Message' -Value \"Said $($_.Operation)\" -PassThru }"
+  -
+    notify: {}
+# only the client node is sent to the browser
+client:
+  # the user info query string is sent to the client as it needs to use the browser authenticated user
+  userInfo:
+    queryString: "asp2/userinfo.aspx?dnNotMatch=Admin&reports="
+  ui:
+    actionButtonTooltip: "Click this button to run the operation on the selected {{noun}}"
+    actionButtonValue: "Perform {{{verb}}} on Selected Targets"
+    advancedMode: false
+    beforeDataMessage: "Click the Find Targets Button"
+    confirmButtonTooltip: "Click here to performing the operation"
+    confirmButtonValue: "Confirm Operation on Selected Targets"
+    confirmDialogTitle: "The Following Operations Will Be Performed"
+    doneButtonTooltip: "Click here to close this window"
+    doneButtonValue: Done
+    filter:
+      filterContextVariable: userName
+      filterDisabled: true
+      filterLabel: Username
+      filterMinimumLength: 0
+      filterPlaceholder: ""
+      filterSecret: "%%%"
+    filterButtonTooltip: "Click this button to find {{{nounPlural}}}"
+    filterButtonValue: "Find Target"
+    filterTooltip: "Enter the {{{noun}}} Name"
+    menuLabel: "Choose An Operation:"
+    noDataMessage: "No targets were found"
+    resultsDialogTitle: "The Following Operations Will Be Performed"
+columns:
+  -
+    displayName: Target
+    enableCellEdit: false
+    name: Name
+  -
+    displayName: "Target User"
+    enableCellEdit: false
+    expression: $context.Name
+    name: userName
+  -
+    displayName: Operation
+    enableCellEdit: false
+    name: Operation
+  -
+    displayName: Message
+    enableCellEdit: false
+    name: Message
+    views:
+      - results
+  -
+    cellTemplate: "<input class=\"ui-grid-cell-contents\" type=\"checkbox\" ng-model=\"row.entity.Selected\" ng-click=\"grid.appScope.selectionClicked(row)\" checked >"
+    displayName: Selected
+    enableCellEdit: true
+    inputType: checkbox
+    name: Selected
+    type: boolean
+    views:
+      - choose
+definitions:
+    serviceName: "service.serviceName"
+    noun: "{{{columns.0.displayName}}}"
+    nounPlural: "{{{columns.0.displayName}}}s"
+    verb: say hello
+job:
+    workflow:
+      - start
+      - discover
+      - choose
+      - confirm
+      - request
+      - approve
+      - apply
+      - notify
+    mock: false
+    admin: true
+    whatif: false
+links:
+    templates: "{{{serviceName}}}/templates"
+operations:
+  userInfo:
+    queryString: "asp2/userinfo.aspx?dnNotMatch=Admin&reports="
+  configClient:
+    command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
+    vars:
+      Username: $context.userName
+  connect:
+    command: ""
+    vars: {}
+  deploy:
+    worker:
+      "Quest Active Roles":
+        - "msiexec /i /q W2K12-KB3134759-x64.msu"
+        - "Add-PSSnapin Quest.ActiveRoles.ADManagement"
+  test: {}
+templates:
+  job: "job.tpl.yml"
+  approval: "approval.tpl.yml"
+service:
+  serviceName: default-service
+  serviceDisplayName: "Default Service"
+  serviceId: A693F37D-1821-4109-BAD9-DDF904DDF736
+
+

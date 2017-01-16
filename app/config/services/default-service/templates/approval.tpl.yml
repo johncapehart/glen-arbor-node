@@ -1,0 +1,11 @@
+The following service request requires approval. You can the voting buttons to approve reject this request.
+
+---
+- {{serviceName}}
+- {{activity}}
+- {{requestedBy}}
+- {{requestedOn}}
+- {{stream}}
+- {{jobid}}
+- {{command}}
+...
