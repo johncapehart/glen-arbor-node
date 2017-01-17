@@ -1,0 +1,19 @@
+---
+"deployMode" : "dev"
+"server":
+    # following pattern to be reverse proxied by IIS
+    "sitePrefix": "/api2/"
+    # following for local use only, not proxied by IIS
+    "privatePrefix": "/__api2/"
+    "asp":
+        "sitePrefix": "/asp2/"
+        "host": "localhost"
+        "protocol": "http"
+        "port":
+    "winrmhost": "localhost"
+    "webhookip": "0.0.0.0"
+    "webhookport": 8082
+    "credential": "sample"
+test:
+    user: john.capehart
+...

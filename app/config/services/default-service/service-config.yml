@@ -1,7 +1,8 @@
 ---
 activities:
   -
-    start: {}
+    start:
+        operation: job
   -
     discover:
       command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
@@ -80,6 +81,9 @@ definitions:
     noun: "{{{columns.0.displayName}}}"
     nounPlural: "{{{columns.0.displayName}}}s"
     verb: say hello
+    aspserver: "{{{server.asp.host}}}"
+    asprotocol: "{{{server.asp.protocol}}}"
+    aspurl: "{{{server.asp.protocol}}}//{{{server.asp.host}}}{{{server.asp.port}}}/{{{server.asp.prefix}}}"
 job:
     workflow:
       - start
@@ -96,8 +100,20 @@ job:
 links:
     templates: "{{{serviceName}}}/templates"
 operations:
+  job:
+    template: job
+  testop:
+    winrm: {
+        vars: [
+        ],
+        functions: [
+        ],
+        statements: [
+        ],
+        output: '@("A","B")'
+    }
   userInfo:
-    queryString: "asp2/userinfo.aspx?dnNotMatch=Admin&reports="
+    href: "{{{aspurl}}}/asp2/userinfo.aspx?dnNotMatch=Admin&reports="
   configClient:
     command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
     vars:

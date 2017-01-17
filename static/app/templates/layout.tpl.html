@@ -1,0 +1,49 @@
+<div id="layout-tpl" class="parentdiv full-height ng-cloak" adjust-height>
+	<h3>{{ui.servicetitle}}</h3>
+    <div id="layout-header">
+        <div class="childdiv" ng-show="ui.advancedMode">
+            <input type="checkbox" ng-model="config.whatif" >Whatif  </input>
+            <input type="checkbox" ng-model="config.mock" >Use Mocks </input>
+        </div>
+        <div class="childdiv">
+            <h4>
+                <span class="label-important" for="filter">{{ui.filter.filterLabel}}</span>
+                <input type="text" class="input-group-lg" id="filter" ng-model="context.filter"
+                       ng-disabled="ui.filter.filterDisabled"
+                       placeholder="{{ui.filter.filterPlaceholder}}"
+                       uib-tooltip="{{ui.filter.filterTooltip}}"
+                       style="margin-inside:10px; margin-left:10px;width:35%;font-size:large;height:35px;"></input>
+            </h4>
+        </div>
+        <div class="childdiv btn-group" uib-dropdown ng-show="ui.menuItems.length > 0">
+            <button id="btn-append-to-single-button" type="button" class="btn btn-primary wide-buttion" uib-dropdown-toggle>
+                {{menuLabel()}}<span>  </span><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-single-button">
+                <li role="menuitem" class="list-group-item" ng-repeat="item in ui.menuItems" ng-click="setMenuIndex($index)">{{item[ui.menu.displayColumnName]}}</li>
+            </ul>
+        </div>
+
+        <div class="childdiv">
+            <input type="button" href id="refreshButton" class="btn btn-success" style="margin-right: 10px;"
+                   ng-disabled="entryIsInvalid()" ng-click="refreshData()"
+                   uib-tooltip="{{ui.filterButtonTooltip}}"
+                   value="{{ui.filterButtonValue}}"/>
+            <input type="button" href id="actionButton" class="btn btn-default btn"
+                   ng-disabled="tabledata.nothingSelected"
+                   ng-click="showModal()" value="{{ui.actionButtonValue}}"
+                   uib-tooltip="{{ui.actionButtonTooltip}}"
+            />
+        </div>
+    </div>
+    <div>
+        <div ui-view="list" class="ui-grid-contents-wrapper" uib-tooltip="{{ui.listTooltip}}"></div>
+    </div>
+    <div id="layout-footer">
+        <div class="watermark2" ng-show="tabledata.verbose.length != 0">{{tabledata.verbose.length}} Messages</div>
+        <div class="watermark2" ng-show="tabledata.warn.length != 0">{{tabledata.error.length}} Warnings</div>
+        <div class="watermark2" ng-show="tabledata.error.length != 0">{{tabledata.error.length}} Errors</div>
+    </div>
+</div>
+
+

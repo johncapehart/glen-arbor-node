@@ -1,0 +1,53 @@
+{
+  "name": "webhookserver",
+  "description": "",
+  "main": "",
+  "authors": [
+    "John Capehart <john@johncapehart.coop>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "requirejs": "latest",
+    "d3": "^4.2.6",
+    "d3-context-menu": "*",
+    "angular-animate": "^1.5.8",
+    "angular": "^1.5.8",
+    "bootstrap-switch": "^3.3.2",
+    "text": "requirejs-text#^2.0.15",
+    "angular-mocks": "^1.5.8",
+    "jquery": "^3.1.1",
+    "angular-ui-grid": "^3.2.9",
+    "angular-ui-router": "^0.3.1",
+    "angular-ui-router-uib-modal": "^0.0.10",
+    "angular-bootstrap": "^2.1.4",
+    "angular-touch": "^1.5.8",
+    "angular-block-ui": "^0.2.2",
+    "jquery-backstretch": "backstretch#^2.0.4",
+    "underscore": "^1.8.3",
+    "angular-tooltips": "^1.1.7",
+    "angular-inform": "^0.0.18",
+    "bootbox.js": "bootbox#^4.4.0",
+    "blockUI": "jquery.blockUI#*",
+    "angular-sanitize": "^1.5.8",
+    "jquery-ui": "^1.12.1"
+  },
+  "resolutions": {
+    "d3": "3",
+    "angular": "1.6.1",
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "protractor": "^4.0.9"
+  }
+}

@@ -3,19 +3,20 @@
  */
 'use strict';
 
+var console = process.console;          //create a local (for the module) console
 var _ = require('lodash');
 var path = require('path');
 
 exports.default = function(config, app) {
     // for each item in services, make add routes based on the config
     var config0 = config;
-    config0.__root.serviceconfigs = (!!config.serviceconfigs) ? config.serviceconfigs : {};
+    config0.__dynamic.root.serviceconfigs = (!!config.serviceconfigs) ? config.serviceconfigs : {};
     var progressiveConfig = require('progressive-config');
     var defaultServices = path.join(path.resolve(__dirname, 'config/services'));
     var registerService = function(config, ith) {
         var serviceconfig = loadService(config, ith);
-        console.log('Configured service ' + serviceconfig.service.serviceName);
-        config0.__root.serviceconfigs[serviceconfig.service.serviceName] = serviceconfig;
+        console.file().info('Configured service ' + serviceconfig.service.serviceName);
+        config0.__dynamic.root.serviceconfigs[serviceconfig.service.serviceName] = serviceconfig;
         return serviceconfig;
     }
     var loadService = function(config, ith) {

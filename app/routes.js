@@ -11,21 +11,13 @@ exports.factory = function (config, app) {
     var fs = require('fs');
 
     var manager = require("./api.js").factory(config, app);
-    var testroutes = require('./test/testroutes').factory(config, manager, app);
-    var testmode = require('./test/testmode.js').factory(config, manager, app);
+    var testroutes = require('./test/mockedroutes').factory(config, manager, app);
+    var testmode = require('./mock/mockingmode.js').factory(config, manager, app);
     var clientconfig;
-
-    refreshConfig();
-    function refreshConfig() {
-        if (testmode.inTestMode) {
-            //config = reload('./config/app-config').default(config.appDir);
-        }
-        clientconfig = _.pick(config, ['client', 'job']);
-    }
 
     config.service.sitePrefix = config.server.sitePrefix + config.service.serviceName;
 
-    app.use(config.service.sitePrefix, function (req, res, next) {
+    config.__dynamic.router.use(config.service.sitePrefix, function (req, res, next) {
         if (config.mock || ((req.query.mock !== void 0) && (req.query.mock === 'true'))) {
             if (!testmode.inTestMode) {
                 testmode.enterTestMode();
@@ -47,7 +39,7 @@ exports.factory = function (config, app) {
         });
     };
 
-    app.use(config.service.sitePrefix + "/clientconfig", clientConfigFunc);
+    config.__dynamic.router.use(config.service.sitePrefix + "/clientconfig", clientConfigFunc);
 
     function forwardHandler(req, res, next, path, body)
     {
@@ -68,11 +60,11 @@ exports.factory = function (config, app) {
             app.logmessage(err);
         }
     }
-    app.use(config.service.sitePrefix + "/config", function (req, res, next) {
+    config.__dynamic.router.use(config.service.sitePrefix + "/config", function (req, res, next) {
         forwardHandler(req, res, next, 'config', {service: config.service.serviceName});
     });
 
-    app.use(config.service.sitePrefix + "/template", function (req, res, next) {
+    config.__dynamic.router.use(config.service.sitePrefix + "/template", function (req, res, next) {
         var context = _.merge({}, req, req.query, req.body);
         forwardHandler(req, res, next, 'config', {service: config.service.serviceName, template: context.template});
     });
@@ -123,8 +115,8 @@ exports.factory = function (config, app) {
     });
 
     var staticdir = path.join(path.dirname(__dirname), 'client');
-    app.use(config.service.sitePrefix + '/static', express.static(staticdir));
+    config.__dynamic.router.use(config.service.sitePrefix + '/static', express.static(staticdir));
     var bowerdir = path.join(path.dirname(__dirname), 'bower_components');
-    app.use(config.service.sitePrefix + '/bower_components', express.static(bowerdir));
+    config.__dynamic.router.use(config.service.sitePrefix + '/bower_components', express.static(bowerdir));
 
 };

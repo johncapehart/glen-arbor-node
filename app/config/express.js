@@ -12,9 +12,10 @@ var cors = require('cors');
 
 exports.default = function (config, app) {
     app.use(cors());
-
-    app.use(morgan('dev'));
-//    app.use(cookieParser());
+    app.use(scribe.express.logger()); //Log each request
+    app.use('/logs', scribe.webPanel());
+    // app.use(morgan('dev'));
+    // app.use(cookieParser());
 
     app.options('*', cors()); // include before other routes
 

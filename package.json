@@ -7,18 +7,20 @@
     "connect": "^3.4.1",
     "cookieparser": "^0.1.0",
     "cors": "^2.7.1",
-    "edge": "^5.9.2",
+    "edge": "^6.5.1",
     "edge-ps": "0.1.0-pre",
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "handlebars": "^4.0.6",
+    "handlebars-helpers": "^0.7.7",
     "js-yaml": "^3.7.0",
     "lodash": "^4.16.4",
     "log4node": "^0.1.6",
     "morgan": "^1.7.0",
     "node-exchange-api": "^1.0.1",
     "node-linq": "0.0.5",
+    "node-uuid": "^1.4.7",
     "node-winrm": "^0.1.2",
     "passport": "^0.3.2",
     "passport-negotiate": "^0.1.4",
@@ -26,32 +28,57 @@
     "q": "^1.4.1",
     "require-reload": "^0.2.2",
     "requirejs": "^2.3.2",
+    "run-middleware": "^0.6.6",
+    "scribe-js": "^2.0.4",
     "should": "^11.1.2",
     "sinon": "^1.17.6",
-    "timer": "0.0.2"
+    "timer": "0.0.2",
+    "windows-credman": "^1.0.1"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johncapehart/glen-arbor-node.git"
+  },
+  "main": "index.js",
+  "author": "John Capehart",
+  "bugs": {
+    "url": "https://github.com/johncapehart/glen-arbor-node/issues"
+  },
+  "homepage": "https://github.com/johncapehart/glen-arbor-node#readme",
+  "contributors": [
+    "johncapehart <john@johncapehart.com>"
+  ],
+  "keywords": [
+    "devops"
+  ],
   "devDependencies": {
     "bower": "^1.7.7",
     "grunt": "^1.0.1",
     "grunt-karma": "^2.0.0",
+    "grunt-bump": "^0.8.0",
+    "grunt-conventional-changelog": "^6.1.0",
+    "grunt-conventional-github-releaser": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-npm": "0.0.2",
     "http-server": "^0.9.0",
     "jasmine-core": "^2.4.1",
-    "karma": "^0.13.22",
-    "karma-junit-reporter": "^0.4.1",
+    "karma": "^1.4.0",
+    "karma-junit-reporter": "^1.2.0",
     "karma-mocha": "^1.3.0",
     "load-grunt-tasks": "^3.5.2",
+    "npm-publish": "^0.4.7",
     "mocha": "^3.2.0",
     "supertest": "^2.0.1"
   },
   "scripts": {
     "update-deps": "npm update",
+    "postupdate-deps": "bower update",
     "prestart": "npm install",
-    "start": "http-server -a localhost -p 8000 -c-1 ./app",
+    "start": "server.js",
     "pretest": "npm install;node index-test.js",
     "test": "mocha",
     "test-single-run": "karma start karma.conf.js --single-run",
-    "update-webdriver": "webdriver-manager update",
-    "update-index-async": "node -e \"var fs=require('fs'),indexFile='app/index-async.html',loaderFile='app/bower_components/angular-loader/angular-loader.min.js',loaderText=fs.readFileSync(loaderFile,'utf-8').split(/sourceMappingURL=angular-loader.min.js.map/).join('sourceMappingURL=bower_components/angular-loader/angular-loader.min.js.map'),indexText=fs.readFileSync(indexFile,'utf-8').split(/\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/).join('//@@NG_LOADER_START@@\\n'+loaderText+'    //@@NG_LOADER_END@@');fs.writeFileSync(indexFile,indexText);\""
+    "update-webdriver": "webdriver-manager update"
   }
 }

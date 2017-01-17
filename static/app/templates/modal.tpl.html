@@ -1,0 +1,14 @@
+<div id="modal-window" class="modal-content" ui-widget-content adjust-modal-height >
+    <div id="modal-header" class="modal-header">
+        <h4>{{title}}</h4>
+    </div>
+    <div id="modal-changes-height" class="modal-body-grid" style="width:100%;">
+        <div id="grid1" ui-grid="gridOptions" ui-grid-row-edit ui-grid-edit ui-grid-pagination=""
+             ui-grid-selection="" class="grid" style="width:100%;"></div>
+    </div>
+    <div id="modal-footer" class="modal-footer">
+        <button class="btn btn-default" ng-hide="{{cancelText ===''}}" ng-click="cancel()">{{cancelText}}
+        </button>
+        <button class="btn btn-primary" ng-click="ok()">{{confirmButtonValue}}</button>
+    </div>
+</div>

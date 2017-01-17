@@ -3,22 +3,24 @@
  */
 'use strict';
 
-exports.default = function (app, localenvDir, serviceDirs) {
+exports.default = function(config, app, express) {
+    var console = process.console;
     var fs = require('fs');
     var path = require('path');
+    var _ = require('lodash');
 
-    var staticdir = path.join(path.dirname(__dirname), 'client');
-    app.use(config.server.sitePrefix + 'static', express.static(staticdir));
-    var bowerdir = path.join(path.dirname(__dirname), 'bower_components');
-    app.use(config.server.sitePrefix + 'bower_components', express.static(bowerdir));
+    // define routes for static files
+    var staticdir = path.resolve(path.join(path.dirname(__dirname), 'static'));
+    var bowerdir = path.resolve(path.join(path.dirname(__dirname), 'bower_components'));
+    config.__dynamic.router.use(config.server.sitePrefix + 'static', config.__dynamic.express.static(staticdir));
+    config.__dynamic.router.use(config.server.sitePrefix + 'bower_components', config.__dynamic.express.static(bowerdir));
 
-    _.map(config.__root.serviceconfigs, function(i) {
-        var staticdir = path.join(path.dirname(__dirname), 'client');
-        app.use(config.server.sitePrefix + 'static', express.static(staticdir));
-        var bowerdir = path.join(path.dirname(__dirname), 'bower_components');
-        app.use(config.server.sitePrefix + 'bower_components', express.static(bowerdir));
+    // define routes through service prefix
+    _.map(config.__dynamic.root.serviceconfigs, function(i) {
+        config.__dynamic.router.use(config.server.sitePrefix + i.service.serviceName + '/static', config.__dynamic.express.static(staticdir));
+        config.__dynamic.router.use(config.server.sitePrefix + i.service.serviceName + '/bower_components', config.__dynamic.express.static(bowerdir));
     });
 
-    app.logmessage("static-service configuration complete");
+    console.info('static-service configuration complete');
 }
 ;

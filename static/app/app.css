@@ -1,0 +1,149 @@
+/* app css stylesheet */
+
+.menu {
+    list-style: none;
+    border-bottom: 0.1em solid black;
+    margin-bottom: 2em;
+    padding: 0 0 0.5em;
+}
+
+.menu:before {
+    content: "[";
+}
+
+.menu:after {
+    content: "]";
+}
+
+.menu > li {
+    display: inline;
+}
+
+.menu > li:before {
+    content: "|";
+    padding-right: 0.3em;
+}
+
+.menu > li:nth-child(1):before {
+    content: "";
+    padding: 0;
+}
+
+[ng-cloak] {
+    display: none;
+}
+
+/* app css stylesheet */
+
+.menu {
+    list-style: none;
+    border-bottom: 0.1em solid black;
+    margin-bottom: 2em;
+    padding: 0 0 0.5em;
+}
+
+.grid {
+    width: auto !important;
+    height: 100%;
+    min-height: 0px;
+}
+
+.ui-grid-row {
+    display: table-row;
+    width: auto !important;
+    height: auto !important;
+}
+
+.ui-grid-cell {
+    display: table-cell;
+    width: auto !important;
+    height: auto !important;
+    vertical-align: middle;
+    float: none;
+}
+
+.ui-grid-header-cell {
+    height: 27px;
+    max-height: 27px;
+}
+
+[ng-cloak],
+.ng-cloak,
+.ng-hide {
+    display: none !important;
+}
+
+#refreshButton {
+    pointer-events: all !important;
+}
+
+#locksButton {
+    pointer-events: all !important;
+}
+
+.parentdiv {
+    padding: 10px;
+}
+
+.childdiv {
+    margin: 10px;
+}
+
+.modal-dialog .modal-lg {
+    width: auto !important;
+    height: auto !important;
+}
+
+.app-modal-window .modal-lg {
+    width: auto !important;
+    height: auto !important;
+}
+
+.modal-content.ui-resizable {
+    overflow: scroll;
+}
+
+.auto-height {
+    height: 100%;
+}
+.full-height {
+    height: 100%;
+    overflow-y:hidden;
+}
+
+#changes-height {
+    height: 200px;
+    /*
+    background-color: #88ddaa;
+    */
+}
+
+html {
+    height: 100vh;
+}
+
+.watermark {
+    position: absolute;
+    top : 80px;
+    opacity: 0.25;
+    font-size: 2em;
+    width: 100%;
+    text-align: center;
+    z-index: 1000;
+}
+
+.watermark2 {
+    opacity: 0.25;
+    font-size: 1.5em;
+    width: 100%;
+    text-align: center;
+    z-index: 1000;
+}
+
+.wide-buttion {
+    min-width:300px;
+}
+
+div[resizable] {
+    border: 2px solid Black;
+}

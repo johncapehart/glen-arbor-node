@@ -1,10 +1,10 @@
 {
-  "id": {{{jobId}}},
-  "requestedBy": {{{requestedBy}}},
+  "id": {{{uuid}}},
+  "requestedBy": {{{userName}}},
   "requestedOn": {{{moment}}},
-  "serviceName": {{{serviceName}}},
-  "serviceId": {{{serviceId}}},
-  "workflow": {{{workflow}}},
+  "serviceName": {{{service.serviceName}}},
+  "serviceId": {{{service.serviceId}}},
+  "workflow": {{{service.workflow}}},
   "currentActivity": null,
   "completedActivities": [
   ]
