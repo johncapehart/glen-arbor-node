@@ -120,7 +120,7 @@ exports.default = function(config, app) {
         return result;
     };
 
-    exports.sucesscallback = function(req, res, next, result) {
+    exports.successcallback = function(req, res, next, result) {
         var result2 = exports.validateOutput(result.output, result.mimetype);
         res.writeHead(200, {'content-type': result.mimetype});
         res.write(result2);
@@ -151,6 +151,7 @@ exports.default = function(config, app) {
                         cb(req, res, next, result, context);
                     }
                 }
+                result = { output: result, mimetype: template.mimetype };
                 cb(req, res, next, result, context);
             } else {
                 res.sendStatus(404);

@@ -33,7 +33,7 @@ describe('#operation-service', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .expect(function(res) {
-                if (res.body.job.template != 'job') {
+                if (res.body.job[0].template.name != 'job') {
                     throw new Error('job operation missing');
                 }
             })

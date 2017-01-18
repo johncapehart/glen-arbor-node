@@ -43,7 +43,7 @@ exports.default = function(config) {
         var iter = context.iter;
         var operation = context.iter.operations[context.iter.i++];
         context.input = result;
-        var cb = iter.i >= iter.operations.length ? templateService.sucesscallback : doOperation;
+        var cb = iter.i >= iter.operations.length ? templateService.successcallback : doOperation;
         var context2 = { context: context, service: context.service, iter: iter};
         if (operation.template) {
             context2.template = operation.template.name;
