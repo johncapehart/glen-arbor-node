@@ -17,9 +17,11 @@ describe('#operation-service', function() {
         });
         res.on('end', function() {
             // console.log('res=', res.data);
-            var result = yaml.safeLoad(res.data);
+            //var result = yaml.safeLoad(res.data);
+            var result = JSON.parse(res.data);
+
             if (!testfn(result)) {
-                throw new Error('Invalid template ressponse');
+                throw new Error('Invalid template response to operation');
             }
             done();
         });
@@ -41,7 +43,7 @@ describe('#operation-service', function() {
         var query = prefix + 'service/operation?service=sample-winrm-service&operation=job&user=' + global.myconfig.test.user;
         request(url)
             .get(query)
-            .set('Accept', 'application/x-yaml')
+            .set('Accept', 'application/json')
             .expect(200)
             .buffer()
             .parse(function(res) {
@@ -58,7 +60,7 @@ describe('#operation-service', function() {
      .set('Accept', 'application/json')
      .expect(200)
      .expect(function (res) {
-     if (res.body.service.serviceName != 'sample-winrm-service') {
+     if (res.body.serviceName != 'sample-winrm-service') {
      throw new Error('Invalid service name');
      }
      if (res.body.columns.length != 5) {

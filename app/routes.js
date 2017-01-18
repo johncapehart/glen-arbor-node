@@ -15,7 +15,7 @@ exports.factory = function (config, app) {
     var testmode = require('./mock/mockingmode.js').factory(config, manager, app);
     var clientconfig;
 
-    config.service.sitePrefix = config.server.sitePrefix + config.service.serviceName;
+    config.service.sitePrefix = config.server.sitePrefix + config.serviceName;
 
     config.__dynamic.router.use(config.service.sitePrefix, function (req, res, next) {
         if (config.mock || ((req.query.mock !== void 0) && (req.query.mock === 'true'))) {
@@ -61,12 +61,12 @@ exports.factory = function (config, app) {
         }
     }
     config.__dynamic.router.use(config.service.sitePrefix + "/config", function (req, res, next) {
-        forwardHandler(req, res, next, 'config', {service: config.service.serviceName});
+        forwardHandler(req, res, next, 'config', {service: config.serviceName});
     });
 
     config.__dynamic.router.use(config.service.sitePrefix + "/template", function (req, res, next) {
         var context = _.merge({}, req, req.query, req.body);
-        forwardHandler(req, res, next, 'config', {service: config.service.serviceName, template: context.template});
+        forwardHandler(req, res, next, 'config', {service: config.serviceName, template: context.template});
     });
 
     app.post(config.service.sitePrefix + "/start", function (req, res, next) {

@@ -40,6 +40,7 @@ exports.default = function(localenvDir, serviceDirs) {
     require('./template-service.js').default(config, app);
     require('./static-service.js').default(config, app);
     require('./operation-service.js').default(config);
+    require('./persist-service.js').default(config);
     // require('./static-service.js').default(app, localenvDir, serviceDirs);
     // require('./job-service.js').default(app, localenvDir, serviceDirs);
     // require('./activity-service.js').default(app, localenvDir, serviceDirs);

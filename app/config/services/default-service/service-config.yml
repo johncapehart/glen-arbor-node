@@ -2,7 +2,7 @@
 activities:
   -
     start:
-        operation: job
+      operation: job
   -
     discover:
       command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
@@ -19,11 +19,7 @@ activities:
       command: "$__l | % { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'Message' -Value \"Said $($_.Operation)\" -PassThru }"
   -
     notify: {}
-# only the client node is sent to the browser
 client:
-  # the user info query string is sent to the client as it needs to use the browser authenticated user
-  userInfo:
-    queryString: "asp2/userinfo.aspx?dnNotMatch=Admin&reports="
   ui:
     actionButtonTooltip: "Click this button to run the operation on the selected {{noun}}"
     actionButtonValue: "Perform {{{verb}}} on Selected Targets"
@@ -47,6 +43,8 @@ client:
     menuLabel: "Choose An Operation:"
     noDataMessage: "No targets were found"
     resultsDialogTitle: "The Following Operations Will Be Performed"
+  userInfo:
+    queryString: asp2/userinfo.aspx?dnNotMatch=Admin&reports=
 columns:
   -
     displayName: Target
@@ -77,43 +75,29 @@ columns:
     views:
       - choose
 definitions:
-    serviceName: "service.serviceName"
-    noun: "{{{columns.0.displayName}}}"
-    nounPlural: "{{{columns.0.displayName}}}s"
-    verb: say hello
-    aspserver: "{{{server.asp.host}}}"
-    asprotocol: "{{{server.asp.protocol}}}"
-    aspurl: "{{{server.asp.protocol}}}//{{{server.asp.host}}}{{{server.asp.port}}}/{{{server.asp.prefix}}}"
+  asprotocol: "{{{server.asp.protocol}}}"
+  aspserver: "{{{server.asp.host}}}"
+  aspurl: "{{{server.asp.protocol}}}//{{{server.asp.host}}}{{{server.asp.port}}}/{{{server.asp.prefix}}}"
+  noun: "{{{columns.0.displayName}}}"
+  nounPlural: "{{{columns.0.displayName}}}s"
+  serviceName: serviceName
+  verb: "say hello"
 job:
-    workflow:
-      - start
-      - discover
-      - choose
-      - confirm
-      - request
-      - approve
-      - apply
-      - notify
-    mock: false
-    admin: true
-    whatif: false
+  admin: true
+  mock: false
+  whatif: false
+  workflow:
+    - start
+    - discover
+    - choose
+    - confirm
+    - request
+    - approve
+    - apply
+    - notify
 links:
-    templates: "{{{serviceName}}}/templates"
+  templates: "{{{serviceName}}}/templates"
 operations:
-  job:
-    template: job
-  testop:
-    winrm: {
-        vars: [
-        ],
-        functions: [
-        ],
-        statements: [
-        ],
-        output: '@("A","B")'
-    }
-  userInfo:
-    href: "{{{aspurl}}}/asp2/userinfo.aspx?dnNotMatch=Admin&reports="
   configClient:
     command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
     vars:
@@ -123,16 +107,32 @@ operations:
     vars: {}
   deploy:
     worker:
-      "Quest Active Roles":
+      ? "Quest Active Roles"
+      :
         - "msiexec /i /q W2K12-KB3134759-x64.msu"
         - "Add-PSSnapin Quest.ActiveRoles.ADManagement"
+  job:
+    - template:
+        name: job
+        context: {}
+    - persist:
+        mode: file
+        name: id
+  job2:
+    - template: job
+    - operation: persist
   test: {}
+  testop:
+    winrm:
+      functions: []
+      output: "@(\"A\",\"B\")"
+      statements: []
+      vars: []
+  userInfo:
+    href: "{{{aspurl}}}/asp2/userinfo.aspx?dnNotMatch=Admin&reports="
+serviceDisplayName: "Default Service"
+serviceId: A693F37D-1821-4109-BAD9-DDF904DDF736
+serviceName: default-service
 templates:
-  job: "job.tpl.yml"
-  approval: "approval.tpl.yml"
-service:
-  serviceName: default-service
-  serviceDisplayName: "Default Service"
-  serviceId: A693F37D-1821-4109-BAD9-DDF904DDF736
-
-
+  approval: approval.tpl.yml
+  job: job.tpl.json

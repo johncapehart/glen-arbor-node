@@ -1,117 +1,80 @@
-{
-  "serviceName": "sample-winrm-service",
-  "displayName": "Sample Service",
-  workflow: [config,context,choose,confirm,approve,apply],
-  "mock": false,
-  "whatif": false,
-  "userInfo": {
-    "queryString": "asp2/userinfo.aspx?dnNotMatch=Admin&reports="
-  },
-  "columns": [
-    {
-      "displayName": "Target Name",
-      "name": "Name",
-      "enableCellEdit": false
-    },
-    {
-      "displayName": "Target User",
-      "name": "userName",
-      "expression": "$context.Name",
-      "enableCellEdit": false
-    },
-    {
-      "displayName": "Operation",
-      "name": "Operation",
-      "enableCellEdit": false
-     },
-    {
-      "displayName": "Message",
-      "name": "Message",
-      "enableCellEdit": false,
-      "views": [
-        "results"
-      ]
-    },
-    {
-      "displayName": "Selected",
-      "name": "Selected",
-      "enableCellEdit": true,
-      "type": "boolean",
-      "inputType": "checkbox",
-      "views": [
-        "choose"
-      ],
-      "cellTemplate": "<input class=\"ui-grid-cell-contents\" type=\"checkbox\" ng-model=\"row.entity.Selected\" ng-click=\"grid.appScope.selectionClicked(row)\" checked >"
-    }
-  ],
-  "client": {
-    "ui": {
-      "filter" : {
-        "filterContextVariable" : "userName",
-        "filterSecret": "%%%",
-        "filterMinimumLength": 0,
-        "filterLabel": "Username",
-        "filterPlaceholder": "",
-        "filterDisabled": true
-      },
-      "advancedMode": false,
-      "menuLabel": "Choose An Operation:",
-      "filterTooltip": "Enter the Target Name",
-      "filterButtonValue": "Find Target",
-      "filterButtonTooltip": "Click this button to find targets",
-      "beforeDataMessage": "Click the Find Targets Button",
-      "noDataMessage": "No targets were found",
-      "actionButtonValue": "Perform Operation on Selected Targets",
-      "actionButtonTooltip": "Click this button to run the operation on the selected targets",
-      "confirmDialogTitle": "The Following Operations Will Be Performed",
-      "confirmButtonValue": "Confirm Operation on Selected Targets",
-      "confirmButtonTooltip": "Click here to performing the operation",
-      "resultsDialogTitle": "The Following Operations Will Be Performed",
-      "doneButtonValue": "Done",
-      "doneButtonTooltip": "Click here to close this window"
-    }
-  },
-  "server": {
-    "deploy": {
-      "worker": {
-        "Quest Active Roles": [
-          "msiexec /i /q W2K12-KB3134759-x64.msu",
-          "Add-PSSnapin Quest.ActiveRoles.ADManagement"
-        ],
-      },
-    },
-    "connect": {
-      "vars": {
-      },
-      "command": null
-    },
-    "config": {
-      "vars": {
-          "Username":"$context.userName"
-      },
-      "command": "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
-    },
-    "discovery": {
-      "vars": {
-        "filter": "$context.filter"
-      },
-      "command": "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
-    },
-    confirm: {
-
-    },
-    approve: {
-
-    },
-    "action": {
-      "command": "$__l | % { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'Message' -Value \"Said $($_.Operation)\" -PassThru }"
-    }
-  },
-  "test": {
-  },
-  "service": {
-    "serviceDisplayName": "Sample WinRM Service",
-    "serviceName": "sample-winrm-service",
-    "serviceId": "85BF8DEB-F904-4877-8A2E-F701222B1945"
-  }
-}
+---
+client:
+  ui:
+    actionButtonTooltip: "Click this button to run the operation on the selected targets"
+    actionButtonValue: "Perform Operation on Selected Targets"
+    advancedMode: false
+    beforeDataMessage: "Click the Find Targets Button"
+    confirmButtonTooltip: "Click here to performing the operation"
+    confirmButtonValue: "Confirm Operation on Selected Targets"
+    confirmDialogTitle: "The Following Operations Will Be Performed"
+    doneButtonTooltip: "Click here to close this window"
+    doneButtonValue: Done
+    filter:
+      filterContextVariable: userName
+      filterDisabled: true
+      filterLabel: Username
+      filterMinimumLength: 0
+      filterPlaceholder: ""
+      filterSecret: "%%%"
+    filterButtonTooltip: "Click this button to find targets"
+    filterButtonValue: "Find Target"
+    filterTooltip: "Enter the Target Name"
+    menuLabel: "Choose An Operation:"
+    noDataMessage: "No targets were found"
+    resultsDialogTitle: "The Following Operations Will Be Performed"
+columns:
+  -
+    displayName: "Target Name"
+    enableCellEdit: false
+    name: Name
+  -
+    displayName: "Target User"
+    enableCellEdit: false
+    expression: $context.Name
+    name: userName
+  -
+    displayName: Operation
+    enableCellEdit: false
+    name: Operation
+  -
+    displayName: Message
+    enableCellEdit: false
+    name: Message
+    views:
+      - results
+  -
+    cellTemplate: "<input class=\"ui-grid-cell-contents\" type=\"checkbox\" ng-model=\"row.entity.Selected\" ng-click=\"grid.appScope.selectionClicked(row)\" checked >"
+    displayName: Selected
+    enableCellEdit: true
+    inputType: checkbox
+    name: Selected
+    type: boolean
+    views:
+      - choose
+server:
+  action:
+    command: "$__l | % { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'Message' -Value \"Said $($_.Operation)\" -PassThru }"
+  approve: {}
+  config:
+    command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
+    vars:
+      Username: $context.userName
+  confirm: {}
+  connect:
+    command: ~
+    vars: {}
+  deploy:
+    worker:
+      ? "Quest Active Roles"
+      :
+        - "msiexec /i /q W2K12-KB3134759-x64.msu"
+        - "Add-PSSnapin Quest.ActiveRoles.ADManagement"
+  discovery:
+    command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
+    vars:
+      filter: $context.filter
+serviceDisplayName: "Sample WinRM Service"
+serviceId: 85BF8DEB-F904-4877-8A2E-F701222B1945
+serviceName: sample-winrm-service
+test: {}

@@ -17,10 +17,9 @@ exports.default = function(config, app, express) {
 
     // define routes through service prefix
     _.map(config.__dynamic.root.serviceconfigs, function(i) {
-        config.__dynamic.router.use(config.server.sitePrefix + i.service.serviceName + '/static', config.__dynamic.express.static(staticdir));
-        config.__dynamic.router.use(config.server.sitePrefix + i.service.serviceName + '/bower_components', config.__dynamic.express.static(bowerdir));
+        config.__dynamic.router.use(config.server.sitePrefix + i.serviceName + '/static', config.__dynamic.express.static(staticdir));
+        config.__dynamic.router.use(config.server.sitePrefix + i.serviceName + '/bower_components', config.__dynamic.express.static(bowerdir));
     });
 
     console.info('static-service configuration complete');
-}
-;
+};

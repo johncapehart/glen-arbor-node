@@ -28,7 +28,7 @@ exports.default = function(config, app) {
                 }
                 res.sendStatus(404);
             } catch (err) {
-                console.error(err);
+                console.error(err.toString(), err.stack.toString());;
                 res.sendStatus(500);
             }
         }
@@ -36,12 +36,12 @@ exports.default = function(config, app) {
 
     _.map(config.__dynamic.root.serviceconfigs, function(i) {
         i.__dynamic.router = config.__dynamic.express.Router();
-        i.__dynamic.router.use(i.server.sitePrefix + i.service.serviceName + '/config', function(req, res, next) {
+        i.__dynamic.router.use(i.server.sitePrefix + i.serviceName + '/config', function(req, res, next) {
             try {
                 var o = _.omit(i, ['__dynamic']);
                 res.json(o);
             } catch (err) {
-                console.error(err);
+                console.error(err.toString(), err.stack.toString());;
                 res.sendStatus(500);
             }
         });
@@ -49,11 +49,12 @@ exports.default = function(config, app) {
 
     config.__dynamic.router.use(config.server.sitePrefix + 'service/list', function(req, res, next) {
             try {
-                res.json(_.map(config.__dynamic.root.serviceconfigs, function(i) {
-                    return i.service;
-                }));
+                var result = _.map(config.__dynamic.root.serviceconfigs, function(i) {
+                    return i.serviceName;
+                });
+                res.json(result);
             } catch (err) {
-                console.error(err);
+                console.error(err.toString(), err.stack.toString());;
                 res.sendStatus(500);
             }
         }
@@ -69,7 +70,7 @@ exports.default = function(config, app) {
                 });
                 res.json(JSON.parse(result));
             } catch (err) {
-                console.error(err);
+                console.error(err.toString(), err.stack.toString());;
                 res.sendStatus(500);
             }
         }

@@ -16,7 +16,7 @@ describe('#template-service', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .expect(function(res) {
-                if (res.body['job'] != 'job.tpl.yml') {
+                if (res.body['job'] != 'job.tpl.json') {
                     throw new Error('job template missing');
                 }
             })
@@ -29,22 +29,36 @@ describe('#template-service', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .expect(function(res) {
-                if (res.body['job'] != 'job.tpl.yml') {
+                if (res.body['job'] != 'job.tpl.json') {
                     throw new Error('job template missing');
                 }
             })
             .end(done);
     });
 
-    function parseTemplate(res, done, testfn) {
+    function parseJsonTemplate(res, done, testfn) {
         res.data = '';
         res.on('data', function(chunk) {
             res.data += chunk;
         });
         res.on('end', function() {
             // console.log('res=', res.data);
-            var result = yaml.safeLoad(res.data);
+            // var result = yaml.safeLoad(res.data);
+            var result = JSON.parse(res.data);
             if (!testfn(result)) {
+                throw new Error('Invalid template ressponse');
+            }
+            done();
+        });
+    }
+
+    function parseTextTemplate(res, done, testfn) {
+        res.data = '';
+        res.on('data', function(chunk) {
+            res.data += chunk;
+        });
+        res.on('end', function() {
+            if (!testfn(res.data)) {
                 throw new Error('Invalid template ressponse');
             }
             done();
@@ -54,11 +68,13 @@ describe('#template-service', function() {
     it('should get a template', function(done) {
         request(url)
             .get(prefix + 'service/template?service=sample-winrm-service&template=job')
-            .set('Accept', 'application/x-yaml')
+            .set('Accept', 'application/json')
             .expect(200)
             .buffer()
             .parse(function(res) {
-                parseTemplate(res, done, function(result) { return typeof result === 'object';});
+                parseTextTemplate(res, done, function(result) {
+                    return result.includes('serviceId');
+                });
             })
             .end(done);
 
@@ -66,12 +82,12 @@ describe('#template-service', function() {
     it('should get a template via service route', function(done) {
         request(url)
             .get(prefix + 'sample-winrm-service/template?template=job')
-            .set('Accept', 'application/x-yaml')
+            .set('Accept', 'application/json')
             .expect(200)
             .buffer()
             .parse(function(res) {
-                parseTemplate(res, done, function(result) {
-                    return typeof result === 'object';
+                parseTextTemplate(res, done, function(result) {
+                    return result.includes('serviceId');
                 });
             })
             .end(done);
@@ -81,11 +97,11 @@ describe('#template-service', function() {
         var query = '?service=sample-winrm-service&template=job&context={"jobId":"testjobid"}';
         request(url)
             .get(prefix + 'service/template' + query)
-            .set('Accept', 'application/x-yaml')
+            .set('Accept', 'application/json')
             .expect(200)
             .buffer()
             .parse(function(res) {
-                parseTemplate(res, done, function(result) {
+                parseJsonTemplate(res, done, function(result) {
                     return result.id.length === 36;
                 });
             })

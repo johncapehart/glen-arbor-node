@@ -9,7 +9,7 @@
 exports.factory = function (config, manager, app) {
     var testmode = require('../test/testmode.js').factory(config, manager, app);
 
-    app.post('/' + config.sitePrefix + config.service.serviceName + '/testpowershell', function (req, res, next) {
+    app.post('/' + config.sitePrefix + config.serviceName + '/testpowershell', function (req, res, next) {
         try {
             manager.test(req, function (err, result) {
                 try {
@@ -25,7 +25,7 @@ exports.factory = function (config, manager, app) {
         }
     });
 
-    app.post('/' + config.sitePrefix + config.service.serviceName + '/testaction', function (req, res, next) {
+    app.post('/' + config.sitePrefix + config.serviceName + '/testaction', function (req, res, next) {
         try {
             var user = req.query.username;
             app.logmessage("Request received for user " + user);

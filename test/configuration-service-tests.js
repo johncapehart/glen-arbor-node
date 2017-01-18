@@ -23,7 +23,7 @@ describe('#configuration-service', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .expect(function(res) {
-                if (res.body[0].serviceDisplayName != 'Default Service') {
+                if (res.body[0] != 'default-service') {
                     throw new Error('default service missing');
                 }
             })
@@ -47,7 +47,7 @@ describe('#configuration-service', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .expect(function(res) {
-                if (res.body.service.serviceName != 'sample-winrm-service') {
+                if (res.body.serviceName != 'sample-winrm-service') {
                     throw new Error('Invalid service name');
                 }
                 if (res.body.columns.length != 5) {

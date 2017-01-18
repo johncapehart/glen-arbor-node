@@ -14,3 +14,4 @@ dist/
 *snippets*
 npm-debug.log
 coverage
+*private*

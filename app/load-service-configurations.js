@@ -15,8 +15,8 @@ exports.default = function(config, app) {
     var defaultServices = path.join(path.resolve(__dirname, 'config/services'));
     var registerService = function(config, ith) {
         var serviceconfig = loadService(config, ith);
-        console.file().info('Configured service ' + serviceconfig.service.serviceName);
-        config0.__dynamic.root.serviceconfigs[serviceconfig.service.serviceName] = serviceconfig;
+        console.file().info('Configured service ' + serviceconfig.serviceName);
+        config0.__dynamic.root.serviceconfigs[serviceconfig.serviceName] = serviceconfig;
         return serviceconfig;
     }
     var loadService = function(config, ith) {
