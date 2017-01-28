@@ -10,7 +10,8 @@ var port = 8082;
 var url = 'http://localhost:' + port;
 
 describe('#winrm-service', function() {
-    function parseTemplate(res, done, testfn) {
+    this.timeout(40000);
+    function parseResult(res, done, testfn) {
         res.data = '';
         res.on('data', function(chunk) {
             res.data += chunk;
@@ -28,15 +29,16 @@ describe('#winrm-service', function() {
     }
 
     it('should run some powershell', function(done) {
-        var query = prefix + 'service/operation?service=sample-winrm-service&operation=job&user=' + global.myconfig.test.user;
+        var query = prefix + 'service/winrm?service=sample-winrm-service&user=' + global.myconfig.test.user;
         request(url)
-            .get(query)
+            .post(query)
+            .send(global.myconfig.$dynamic.root.serviceconfigs['sample-winrm-service'].test.services.winrm)
             .set('Accept', 'application/json')
             .expect(200)
             .buffer()
             .parse(function(res) {
-                parseTemplate(res, done, function(result) {
-                    return result.id.length === 36;
+                parseResult(res, done, function(result) {
+                    return result.output = "hi 16";
                 });
             })
             .end(done);

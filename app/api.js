@@ -35,11 +35,8 @@ function evaluateColumnExpression(__context, expression) {
     }
 }
 
-
 exports.factory = function (config, app) {
     var instance = {};
-    var jobTemplatePath = config.__getRelativePath("templates", "job");
-    instance.jobTemplate = Handlebars.compile(fs.readFileSync(jobTemplatePath, 'utf8'));
     var winrm = require('node-winrm').factory(config.server.winrmhost, config.server.credential);
     config.payload = winrm.payload;
 

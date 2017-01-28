@@ -1,5 +1,0 @@
-{
-    client: {{{config.client}}}
-    columns: {{{config.columns}}}
-    workflow: {{{config.workflow}}}
-}

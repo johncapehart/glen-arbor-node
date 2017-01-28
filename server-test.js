@@ -7,6 +7,6 @@ exports.default = function() {
     var serviceDir = [path.resolve('services')];
     // following returns a promise
     var appPromise = require('./index.js').default(localenvDir, serviceDir);
-    console.log('test-server.js complet with promise ' + appPromise);
+    console.log('test-server.js complete with promise ' + appPromise);
     return appPromise;
 };

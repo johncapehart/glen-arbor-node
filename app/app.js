@@ -29,9 +29,9 @@ exports.default = function(localenvDir, serviceDirs) {
     };
     require('./config/express').default(config, app);
 
-    config.__dynamic.router = express.Router();
-    config.__dynamic.express = express;
-    config.__dynamic.app = app;
+    config.$dynamic.router = express.Router();
+    config.$dynamic.express = express;
+    config.$dynamic.app = app;
 
     app.config = config;
 
@@ -40,18 +40,20 @@ exports.default = function(localenvDir, serviceDirs) {
     require('./template-service.js').default(config, app);
     require('./static-service.js').default(config, app);
     require('./operation-service.js').default(config);
+    require('./activity-service.js').default(config);
     require('./persist-service.js').default(config);
+    require('./winrm-service.js').default(config);
     // require('./static-service.js').default(app, localenvDir, serviceDirs);
     // require('./job-service.js').default(app, localenvDir, serviceDirs);
     // require('./activity-service.js').default(app, localenvDir, serviceDirs);
     // require('./devops-selfservice/server/staticFile-service.js').default(localenvDir, serviceDir);
 
-    config.__dynamic.router.get('/api2/service/list', function(req, res) {
+    config.$dynamic.router.get('/api2/service/list', function(req, res) {
         console.info("test router");
     });
-    app.use('/', config.__dynamic.router);
-    _.map(config.__dynamic.root.serviceconfigs, function(i) {
-        app.use('/', i.__dynamic.router);
+    app.use('/', config.$dynamic.router);
+    _.map(config.$dynamic.root.serviceconfigs, function(i) {
+        app.use('/', i.$dynamic.router);
     });
 
     function startServer() {

@@ -1,0 +1,13 @@
+{
+  "requestedOn": "{{{moment}}}",
+  "serviceId": "{{{serviceId}}}",
+  "completedActivities": [],
+  "serviceName": "{{{serviceName}}}",
+  "workflow": [{{#each job.workflow}}
+    "{{{this}}}"{{#unless @last}},{{/unless}}
+    {{/each}}],
+  "currentActivity": null,
+  "requestedBy": "{{{userName}}}",
+  "id": "{{{uuid}}}",
+  "gu": "{{gu}}: {{#locallink gu}}{{{this}}}{{/locallink}}"
+}

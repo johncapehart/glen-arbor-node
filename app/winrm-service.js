@@ -5,6 +5,7 @@
  * Created by john.capehart on 9/25/2016.
  */
 'use strict';
+var console = process.console;
 
 var _ = require('lodash');
 var LINQ = require('node-linq').LINQ;
@@ -12,113 +13,90 @@ var fs = require('fs');
 var path = require('path');
 var yaml = require('js-yaml');
 const Handlebars = require('handlebars');
+var templateService = require('./template-service.js');
 
-function makeVarsCommand(vars, __context) {
-    var command = "";
-    try {
-        if (!!vars) {
-            Object.keys(vars).forEach(function (key, index) {
-                var variableName = '$' + key;
-                var commandvalue = eval(vars[key]);
-                command += variableName + " = " + commandvalue + ";";
-            });
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-    return command;
-}
+exports.default = function(config, app) {
 
-function evaluateColumnExpression(__context, expression) {
-    try {
-        return eval(expression);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-
-exports.factory = function (config, app) {
-    var instance = {};
-    var jobTemplatePath = config.__getRelativePath("templates", "job");
-    instance.jobTemplate = Handlebars.compile(fs.readFileSync(jobTemplatePath, 'utf8'));
-    var winrm = require('node-winrm').factory(config.server.winrmhost, config.server.credential);
-    config.payload = winrm.payload;
-
-    config.connectcommand = "$ErrorActionPreference =[System.Management.Automation.ActionPreference]::Stop;Import-Module Json4PS;";
-    config.connectcommand += makeVarsCommand(config.operations.connect.vars);
-    if (!!config.operations.connect.command) {
-        config.connectcommand += config.operations.connect.command + ";";
+    function prepareOutput(result, context, cb) {
+        var oresult = JSON.parse(result);
+        var data;
+        oresult.output = {
+            data: data
+        };
+        console.file().info('Retrieved ' + data.length + ' records');
+        cb(null, oresult);
     }
 
-
-    function prepareOutput(result, cb) {
-        try {
-            var oresult = JSON.parse(result);
-            var data;
-            if (oresult.output.length > 0 && oresult.output[0] !== null) {
-                var expressions = new LINQ(config.columns)
-                    .Where(function (c) {
-                        return typeof c.expression !== 'undefined';
-                    });
-                data = new LINQ(oresult.output)
-                    .Select(function (f) {
-                        // console.log("column expression for " + f);
-                        expressions
-                            .Map(function (e) {
-                                f[e.name] = evaluateColumnExpression(f, e.expression);
-                            });
-                        return f;
-                    });
-                if (!!config.server.discovery.sort) {
-                    data = data.OrderBy(function (f) {
-                        return f[config.server.discovery.sort];
-                    });
-                }
-                data = data.ToArray();
-            } else {
-                data = [];
+    exports.handleWinRM = function(req, res, next, context, cb) {
+        var forreal = context.forreal;
+        var whatif = context.whatif;
+        var swhatif = ((forreal === true) && (whatif === false)) ? '' : ' -whatif ';
+        if (context.input) {
+            if (typeof context.input !== 'string') {
+                context.input = JSON.stringify(context.input);
             }
-            oresult.output = {
-                data: data
-            };
-            app.logmessage("Retrieved " + data.length + " records");
-            cb(null, oresult);
-        } catch (err) {
-            app.logmessage(err);
-            cb(err, null);
+            context.command += '$InputObject' + ' = @\'\n' + context.input + '\n\'@ | convert-jsontohashtable;\n';
         }
-    }
-
-    instance.doOperation = function(job, operation, cb) {
-        try {
-            var user = req.query.username;
-            var forreal = req.body.forreal;
-            var whatif = req.body.whatif || config.whatif;
-            var list = JSON.stringify(req.body.list);
-            var context = _.merge({}, req, req.query, req.body);
-
-            var swhatif = ((forreal === true) && (whatif === false)) ? "" : " -whatif ";
-            var streamVariable = server.streamVariable !== undefined ? server.streamVariable : "$__";
-            var command = config.connectcommand + makeVarsCommand(config.server.action.vars, context) +
-                server.streamVariable +
-                " = @'\n" + list + "\n'@ | convert-jsontohashtable; " + config.server.action.command;
-
-            console.log(command);
-            winrm.callps(command, config.payload, function (err, result) {
-                prepareOutput(result, function (err, result) {
-                    cb(err, result);
+        if (context.pipe) {
+            if (context.pipe.startsWith('{')) {
+                context.pipe = ' % ' + context.pipe;
+            } else {
+                context.pipe += swhatif;
+            }
+            context.command += '$InputObject | ' + context.pipe + ';\n';
+        }
+        console.file().info('\n' + context.command);
+        context.template = 'winrm';
+        templateService.handleTemplate(req, res, next, context, function(req, res, next, result) {
+        context.config.$dynamic.winrm.callps(context.command, config.payload, function(err, result) {
+            if (context.output === 'columns') {
+                prepareOutput(result, context, function(err, result) {
+                    result.command = context.command;
+                    result.mimetype = 'application/json';
+                    cb(req, res, end, result, context);
                 });
-            });
-        } catch (err) {
-            cb(err, null);
+            } else {
+                result = { output: result, mimetype: 'application/json' };
+                cb(req, res, next, result, context);
+            }
+        });});
+    };
+
+    config.$dynamic.router.use(config.server.sitePrefix + 'service/winrm', function(req, res, next) {
+            try {
+                var context = _.merge({}, req.query, req.body);
+                var localconfig = config;
+                var serviceName = context.service;
+                if (!!serviceName) {
+                    var serviceConfig = config.$dynamic.root.serviceconfigs[serviceName];
+                    context = _.merge({}, serviceConfig.operations.winrm, context);
+                    context.config = serviceConfig;
+                    exports.handleWinRM(req, res, next, context, templateService.successcallback);
+                    return;
+                }
+                res.sendStatus(404);
+            } catch (err) {
+                console.file().error(err.toString(), err.stack.toString());
+                res.sendStatus(500);
+            }
         }
-    };
+    );
 
-    instance.pstest = function (req, cb) {
-        winrm.callps("'PowerShell test succeeded'", config.payload, cb);
-    };
+    _.map(config.$dynamic.root.serviceconfigs, function(serviceConfig) {
+        serviceConfig.$dynamic.winrm = require('node-winrm').factory(config.server.winrmhost, config.server.credential);
+        config.payload = serviceConfig.$dynamic.winrm.payload;
 
-    return instance;
+        serviceConfig.$dynamic.router.use(serviceConfig.server.sitePrefix + serviceConfig.serviceName + '/winrm', function(req, res, next) {
+            try {
+                var context = _.merge({}, req.query, req.body);
+                context = _.merge({}, serviceConfig.operations.winrm, context);
+                context.service = serviceConfig.serviceName;
+                context.config = serviceConfig;
+                exports.handleWinRM(req, res, next, context, templateService.successcallback);
+            } catch (err) {
+                console.file().error(err.toString(), err.stack.toString());
+                res.sendStatus(500);
+            }
+        });
+    });
 };

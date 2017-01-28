@@ -50,13 +50,13 @@ exports.default = function(config) {
         }
     };
 
-    config.__dynamic.router.use(config.server.sitePrefix + 'service/persist', function(req, res, next) {
+    config.$dynamic.router.use(config.server.sitePrefix + 'service/persist', function(req, res, next) {
         try {
             var context = _.merge({}, req.query, req.body);
             exports.handlePersist(req, res, next, context, templateService.sucesscallback);
             res.sendStatus(404);
         } catch (err) {
-            console.error(err.toString(), err.stack.toString());
+            console.file().error(err.toString(), err.stack.toString());
             res.sendStatus(500);
         }
     });

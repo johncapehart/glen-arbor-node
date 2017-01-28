@@ -2,7 +2,10 @@
 activities:
   -
     start:
-      operation: job
+      - job
+      - winrm:
+      - clientconfig
+
   -
     discover:
       command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
@@ -44,6 +47,7 @@ client:
     noDataMessage: "No targets were found"
     resultsDialogTitle: "The Following Operations Will Be Performed"
   userInfo:
+    href: "{{{aspurl}}}/asp2/userinfo.aspx?dnNotMatch=Admin&reports="
     queryString: asp2/userinfo.aspx?dnNotMatch=Admin&reports=
 columns:
   -
@@ -53,8 +57,8 @@ columns:
   -
     displayName: "Target User"
     enableCellEdit: false
-    expression: $context.Name
-    name: userName
+    expression: '{{{context.name}}}'
+    name: UserName
   -
     displayName: Operation
     enableCellEdit: false
@@ -98,13 +102,8 @@ job:
 links:
   templates: "{{{serviceName}}}/templates"
 operations:
-  configClient:
+  clientconfig:
     command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
-    vars:
-      Username: $context.userName
-  connect:
-    command: ""
-    vars: {}
   deploy:
     worker:
       ? "Quest Active Roles"
@@ -112,24 +111,52 @@ operations:
         - "msiexec /i /q W2K12-KB3134759-x64.msu"
         - "Add-PSSnapin Quest.ActiveRoles.ADManagement"
   job:
-    - template:
-        name: job
+    -
+      template:
         context: {}
-    - persist:
+        name: job
+    -
+      persist:
         mode: file
         name: id
-  test: {}
-  testop:
-    winrm:
-      functions: []
-      output: "@(\"A\",\"B\")"
-      statements: []
-      vars: []
-  userInfo:
-    href: "{{{aspurl}}}/asp2/userinfo.aspx?dnNotMatch=Admin&reports="
+  vars:
+    Username: $context.userName
+  winrm:
+    connect: "$ErrorActionPreference =[System.Management.Automation.ActionPreference]::Stop;Import-Module Json4PS;"
+    input: []
+    pipe: {}
+    splat: []
+    statements: []
+    vars: []
+server:
+  action:
+    command: "$__l | % { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'Message' -Value \"Said $($_.Operation)\" -PassThru }"
+  approve: {}
+  config:
+    command: "@(@{'name'='One';'displayName'='Hello';'command'='Hello $userName'},@{'name'='Two';'displayName'='Goodbye'})"
+    vars:
+      Username: $context.userName
+  confirm: {}
+  connect:
+    command: ~
+    vars: {}
+  deploy:
+    worker:
+      ? "Quest Active Roles"
+      :
+        - "msiexec /i /q W2K12-KB3134759-x64.msu"
+        - "Add-PSSnapin Quest.ActiveRoles.ADManagement"
+  discovery:
+    command: "$ldapfilter = \"(&(anr=$filter)(!(UserAccountControl:1.2.840.113556.1.4.803:=2)))\";get-aduser -LDAPFilter $ldapfilter -Properties DistinguishedName,EmailAddress,GivenName,Surname,DisplayName,Enabled -ErrorAction Stop"
+    vars:
+      filter: $context.filter
+
 serviceDisplayName: "Default Service"
 serviceId: A693F37D-1821-4109-BAD9-DDF904DDF736
 serviceName: default-service
+psservice: default
 templates:
   approval: approval.tpl.yml
+  client: client.tpl.json
   job: job.tpl.json
+  winrm: winrm.tpl.ps1

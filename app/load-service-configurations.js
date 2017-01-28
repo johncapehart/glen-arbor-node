@@ -10,13 +10,13 @@ var path = require('path');
 exports.default = function(config, app) {
     // for each item in services, make add routes based on the config
     var config0 = config;
-    config0.__dynamic.root.serviceconfigs = (!!config.serviceconfigs) ? config.serviceconfigs : {};
+    config0.$dynamic.root.serviceconfigs = (!!config.serviceconfigs) ? config.serviceconfigs : {};
     var progressiveConfig = require('progressive-config');
     var defaultServices = path.join(path.resolve(__dirname, 'config/services'));
     var registerService = function(config, ith) {
         var serviceconfig = loadService(config, ith);
         console.file().info('Configured service ' + serviceconfig.serviceName);
-        config0.__dynamic.root.serviceconfigs[serviceconfig.serviceName] = serviceconfig;
+        config0.$dynamic.root.serviceconfigs[serviceconfig.serviceName] = serviceconfig;
         return serviceconfig;
     }
     var loadService = function(config, ith) {

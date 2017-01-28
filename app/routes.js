@@ -17,7 +17,7 @@ exports.factory = function (config, app) {
 
     config.service.sitePrefix = config.server.sitePrefix + config.serviceName;
 
-    config.__dynamic.router.use(config.service.sitePrefix, function (req, res, next) {
+    config.$dynamic.router.use(config.service.sitePrefix, function (req, res, next) {
         if (config.mock || ((req.query.mock !== void 0) && (req.query.mock === 'true'))) {
             if (!testmode.inTestMode) {
                 testmode.enterTestMode();
@@ -39,7 +39,7 @@ exports.factory = function (config, app) {
         });
     };
 
-    config.__dynamic.router.use(config.service.sitePrefix + "/clientconfig", clientConfigFunc);
+    config.$dynamic.router.use(config.service.sitePrefix + "/clientconfig", clientConfigFunc);
 
     function forwardHandler(req, res, next, path, body)
     {
@@ -60,11 +60,11 @@ exports.factory = function (config, app) {
             app.logmessage(err);
         }
     }
-    config.__dynamic.router.use(config.service.sitePrefix + "/config", function (req, res, next) {
+    config.$dynamic.router.use(config.service.sitePrefix + "/config", function (req, res, next) {
         forwardHandler(req, res, next, 'config', {service: config.serviceName});
     });
 
-    config.__dynamic.router.use(config.service.sitePrefix + "/template", function (req, res, next) {
+    config.$dynamic.router.use(config.service.sitePrefix + "/template", function (req, res, next) {
         var context = _.merge({}, req, req.query, req.body);
         forwardHandler(req, res, next, 'config', {service: config.serviceName, template: context.template});
     });
@@ -115,8 +115,8 @@ exports.factory = function (config, app) {
     });
 
     var staticdir = path.join(path.dirname(__dirname), 'client');
-    config.__dynamic.router.use(config.service.sitePrefix + '/static', express.static(staticdir));
+    config.$dynamic.router.use(config.service.sitePrefix + '/static', express.static(staticdir));
     var bowerdir = path.join(path.dirname(__dirname), 'bower_components');
-    config.__dynamic.router.use(config.service.sitePrefix + '/bower_components', express.static(bowerdir));
+    config.$dynamic.router.use(config.service.sitePrefix + '/bower_components', express.static(bowerdir));
 
 };

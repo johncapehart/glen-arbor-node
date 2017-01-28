@@ -13,15 +13,16 @@ exports.default = function(config) {
     var templateService = require('./template-service.js');
     var persistService = require('./persist-service.js');
     var configurstionService = require('./configuration-service.js');
+    var operationService = require('./operation-service.js');
 
-    config.$dynamic.router.use(config.server.sitePrefix + 'service/operation/list', function(req, res, next) {
+    config.$dynamic.router.use(config.server.sitePrefix + 'service/activity/list', function(req, res, next) {
         try {
             var context = _.merge({}, req.query, req.body);
             var serviceName = context.service;
             if (!!serviceName) {
                 var serviceConfig = config.$dynamic.root.serviceconfigs[serviceName];
                 if (!!serviceConfig) {
-                    res.json(serviceConfig.operations);
+                    res.json(serviceConfig.activitys);
                     return;
                 }
             }
@@ -32,59 +33,40 @@ exports.default = function(config) {
         }
     });
 
-    exports.handleTemplate = function(req, res, next, context, cb) {
-        templateService.handleTemplate(req, res, next, context, cb);
-    }
-
-    exports.handlePersist = function(req, res, next, context, cb) {
-        persistService.handlePersist(req, res, next, context, cb);
-    }
-
-    exports.handleConfiguration = function(req, res, next, context, cb) {
-        configurstionService.handleConfiguration(req, res, next, context, cb);
-    }
-
-    exports.handleWinRMJob = function(req, res, next, context, cb) {
-        winRMService.handleWinRM(req, res, next, context, cb);
-    }
-
-    var doOperation = function(req, res, next, result, context, cb) {
+    var doActivity = function(req, res, next, result, context, cb) {
         var iter = context.iter;
         var operation = context.iter.operations[context.iter.i++];
         context.input = result;
-        var cb = iter.i >= iter.operations.length ? templateService.successcallback : doOperation;
+        var cb = iter.i >= iter.operations.length ? templateService.successcallback : doActivity;
         var context2 = { context: context, service: context.service, iter: iter};
         if (operation.template) {
             context2.template = operation.template.name;
             context2 = _.merge(context2, operation.template.context);
-            exports.handleTemplate(req, res, next, context2, cb);
+            operationService.handleTemplate(req, res, next, context2, cb);
         } else if (operation.persist) {
             context2 = _.merge(context2, operation.persist);
-            exports.handlePersist(req, res, next, context2, cb);
+            operationService.handlePersist(req, res, next, context2, cb);
         } else if (operation.configuration) {
             context2 = _.merge(context2, operation.persist);
-            exports.handleConfiguration(req, res, next, context2, cb);
-        } else if (operation.winrm) {
-            context2 = _.merge(context2, operation.persist);
-            exports.handleWinRM(req, res, next, context2, cb);
+            operationService.handleConfiguration(req, res, next, context2, cb);
         }
     }
 
-    config.$dynamic.router.use(config.server.sitePrefix + 'service/operation', function(req, res, next) {
+    config.$dynamic.router.use(config.server.sitePrefix + 'service/activity', function(req, res, next) {
         try {
             var context = _.merge({}, req.query, req.body);
             var serviceName = context.service;
-            var operationName = context.operation;
-            if (!!serviceName && !!operationName) {
+            var activityName = context.activity;
+            if (!!serviceName && !!activityName) {
                 var serviceConfig = config.$dynamic.root.serviceconfigs[serviceName];
-                var operations = serviceConfig.operations[operationName];
+                var activitys = serviceConfig.activitys[activityName];
                 var context2 = _.merge({}, serviceConfig, context, progressiveConfig.defaultFilter);
                 if (!!serviceConfig) {
-                    var operation = serviceConfig.operations[operationName];
-                    if (!!operation) {
-                        var operations2 = Array.isArray(operation) ? operation : [operation];
-                        context2.iter = {operations: operations2, i: 0};
-                        doOperation(req, res, next, {}, context2)
+                    var activity = serviceConfig.activitys[activityName];
+                    if (!!activity) {
+                        var activitys2 = Array.isArray(activity) ? activity : [activity];
+                        context2.iter = {activitys: activitys2, i: 0};
+                        doactivity(req, res, next, {}, context2)
                         return;
                     }
                 }

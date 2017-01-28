@@ -12,13 +12,13 @@ exports.default = function(config, app, express) {
     // define routes for static files
     var staticdir = path.resolve(path.join(path.dirname(__dirname), 'static'));
     var bowerdir = path.resolve(path.join(path.dirname(__dirname), 'bower_components'));
-    config.__dynamic.router.use(config.server.sitePrefix + 'static', config.__dynamic.express.static(staticdir));
-    config.__dynamic.router.use(config.server.sitePrefix + 'bower_components', config.__dynamic.express.static(bowerdir));
+    config.$dynamic.router.use(config.server.sitePrefix + 'static', config.$dynamic.express.static(staticdir));
+    config.$dynamic.router.use(config.server.sitePrefix + 'bower_components', config.$dynamic.express.static(bowerdir));
 
     // define routes through service prefix
-    _.map(config.__dynamic.root.serviceconfigs, function(i) {
-        config.__dynamic.router.use(config.server.sitePrefix + i.serviceName + '/static', config.__dynamic.express.static(staticdir));
-        config.__dynamic.router.use(config.server.sitePrefix + i.serviceName + '/bower_components', config.__dynamic.express.static(bowerdir));
+    _.map(config.$dynamic.root.serviceconfigs, function(i) {
+        config.$dynamic.router.use(config.server.sitePrefix + i.serviceName + '/static', config.$dynamic.express.static(staticdir));
+        config.$dynamic.router.use(config.server.sitePrefix + i.serviceName + '/bower_components', config.$dynamic.express.static(bowerdir));
     });
 
     console.info('static-service configuration complete');

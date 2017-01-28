@@ -1,0 +1,13 @@
+---
+test:
+    services:
+        winrm:
+          credential: sample
+          connectcommand: "$ErrorActionPreference =[System.Management.Automation.ActionPreference]::Stop;Import-Module Json4PS;"
+          testfunc: '{ param($a1,$b1) "$somevar $($a1.aa + $b1)"; write-verbose "testfunc complete" -verbose }'
+          statements: []
+          input:
+            - "aa": 5
+          splat: []
+          pipe: "{ foo $_ 11 }"
+          output: null
